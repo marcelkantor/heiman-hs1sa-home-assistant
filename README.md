@@ -44,7 +44,7 @@ ZHA automatically creates **12 entities** for each HS1SA-EF-3.0:
 
 This is what the device page looks like after pairing — all sensors and configuration options visible immediately, no extra setup required:
 
-![Device page – bedroom smoke detector](images/device-page-bedroom.png)
+![Device page – bedroom smoke detector](device-page-bedroom.png)
 
 > **Note:** The `Default siren level`, `Default siren tone`, and strobe controls may show `unknown` until the device sends its first configuration report. This is normal — the sensor still operates correctly.
 
@@ -52,11 +52,11 @@ This is what the device page looks like after pairing — all sensors and config
 
 Smoke binary sensor (`device_class: smoke`, state `off` = clear):
 
-![Developer Tools – smoke sensor state](images/dev-tools-smoke-state.png)
+![Developer Tools – smoke sensor state](dev-tools-smoke-state.png)
 
 Temperature sensor with full attributes (`state_class: measurement`, `device_class: temperature`):
 
-![Developer Tools – temperature sensor state](images/dev-tools-temperature-state.png)
+![Developer Tools – temperature sensor state](dev-tools-temperature-state.png)
 
 ### Example entity IDs (rename to your preference after pairing):
 
@@ -427,7 +427,7 @@ data:
 
 The security dashboard provides a live overview of all sensors, system status, and alarm event statistics:
 
-![Security dashboard](images/security-dashboard.png)
+![Security dashboard](security-dashboard.png)
 
 Key sections visible:
 - **System status** (`Armed – OK` = all clear)

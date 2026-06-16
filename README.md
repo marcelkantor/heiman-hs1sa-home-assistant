@@ -63,24 +63,6 @@ The HEIMAN quirk also exposes extra entities that make the detector much more us
 
 This turns the HS1SA-EF-3.0 into more than a simple smoke detector in Home Assistant: it becomes a monitored safety device with remote test/mute controls, chamber telemetry, siren options and Zigbee health counters.
 
-### Device page in Home Assistant
-
-This is what the device page looks like after pairing — all sensors and configuration options visible immediately, no extra setup required:
-
-![Device page – bedroom smoke detector](images/device-page-bedroom.png)
-
-After pairing, press the physical test button once or use the Identify button from Home Assistant to confirm two-way communication.
-
-### Entities in Developer Tools → States
-
-Smoke binary sensor (`device_class: smoke`, state `off` = clear):
-
-![Developer Tools – smoke sensor state](images/dev-tools-smoke-state.png)
-
-Temperature sensor with full attributes (`state_class: measurement`, `device_class: temperature`):
-
-![Developer Tools – temperature sensor state](images/dev-tools-temperature-state.png)
-
 ### Example entity IDs (rename to your preference after pairing):
 
 ```yaml
@@ -458,8 +440,6 @@ data:
 
 The security dashboard provides a live overview of all sensors, system status, and alarm event statistics:
 
-![Security dashboard](images/security-dashboard.png)
-
 Key sections visible:
 - **System status** (`Armed – OK` = all clear)
 - **System control** — arm/disarm, night mode, temporary mute toggle
@@ -488,11 +468,6 @@ Key sections visible:
 packages/
 └── ems_security.yaml    ← all config: input_boolean, input_number,
                             template sensors, counters, automations
-images/
-├── device-page-bedroom.png
-├── dev-tools-smoke-state.png
-├── dev-tools-temperature-state.png
-└── security-dashboard.png
 ```
 
 ---

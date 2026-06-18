@@ -63,6 +63,16 @@ The HEIMAN quirk also exposes extra entities that make the detector much more us
 
 This turns the HS1SA-EF-3.0 into more than a simple smoke detector in Home Assistant: it becomes a monitored safety device with remote test/mute controls, chamber telemetry, siren options and Zigbee health counters.
 
+### Current Home Assistant views
+
+Device information, HEIMAN/ZHA quirk support, firmware `0x00000022`, remote controls and sensor readings:
+
+![Home Assistant device, controls and sensors view](images/ha-device-control-sensors.jpg)
+
+Diagnostic entities exposed by the HEIMAN quirk:
+
+![Home Assistant diagnostics view](images/ha-diagnostics-view.jpg)
+
 ### Example entity IDs (rename to your preference after pairing):
 
 ```yaml
@@ -468,6 +478,9 @@ Key sections visible:
 packages/
 └── ems_security.yaml    ← all config: input_boolean, input_number,
                             template sensors, counters, automations
+images/
+├── ha-device-control-sensors.jpg
+└── ha-diagnostics-view.jpg
 ```
 
 ---

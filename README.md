@@ -23,7 +23,9 @@ A complete, production-ready Home Assistant integration for the **HEIMAN HS1SA-E
 
 ## 📦 Entities Exposed (per device)
 
-With the HEIMAN ZHA quirk support, Home Assistant exposes the main smoke, temperature, battery, siren, OTA and signal-quality entities for each HS1SA-EF-3.0:
+With the HEIMAN ZHA quirk support from [`Leo2442926161/zha-device-handlers`](https://github.com/Leo2442926161/zha-device-handlers), Home Assistant exposes the main smoke, temperature, battery, siren, OTA and signal-quality entities for each HS1SA-EF-3.0.
+
+This newer quirk is a big quality-of-life upgrade over the earlier local experiment: it keeps the important smoke and siren entities, adds useful diagnostic/control entities, and presents the device as a much more complete Home Assistant safety device.
 
 | Entity | Type | Description |
 |---|---|---|
@@ -31,10 +33,6 @@ With the HEIMAN ZHA quirk support, Home Assistant exposes the main smoke, temper
 | `sensor.*_temperatura` | `temperature` | Ambient temperature (°C) |
 | `sensor.*_bateria` | `battery` | Battery level (%) + voltage attribute |
 | `siren.*` | `siren` | Built-in alarm siren (HA-controllable) |
-| `select.*_default_siren_tone` | `select` | Siren sound type |
-| `select.*_default_siren_level` | `select` | Siren volume (`Very high level sound`, etc.) |
-| `select.*_domyslny_stroboskop` | `select` | Strobe mode |
-| `select.*_domyslny_poziom_stroboskopu` | `select` | Strobe intensity |
 | `button.*_zidentyfikuj` | `button` | Identify (blinks LED) |
 | `update.*_firmware` | `update` | OTA firmware updates via ZHA |
 | `sensor.*_lqi` | `sensor` | Zigbee link quality |
@@ -42,26 +40,24 @@ With the HEIMAN ZHA quirk support, Home Assistant exposes the main smoke, temper
 
 ### Extended HEIMAN quirk entities
 
-The HEIMAN quirk also exposes extra entities that make the detector much more useful for maintenance, diagnostics and remote testing:
+The Leo quirk also exposes extra entities that make the detector much more useful for maintenance, diagnostics and remote testing:
 
 | Entity | Type | Description |
 |---|---|---|
-| `binary_sensor.*_selftest` | `binary_sensor` | Self-test status |
-| `binary_sensor.*_fault` | `problem` | Device fault status |
-| `binary_sensor.*_muted` | `binary_sensor` | Local mute status |
+| `binary_sensor.*_self_test` | `binary_sensor` | Self-test status |
+| `binary_sensor.*_problem` | `problem` | Device fault status |
+| `binary_sensor.*_muted_2` | `binary_sensor` | Local mute status |
 | `binary_sensor.*_interconnectable` | `binary_sensor` | Interconnect capability/status |
-| `button.*_remote_test` | `button` | Remote test command from Home Assistant |
+| `button.*_remote_test_2` | `button` | Remote test command from Home Assistant |
 | `switch.*_remote_mute` | `switch` | Remote mute control |
 | `switch.*_heartbeat_indicator` | `switch` | Heartbeat LED indicator control |
 | `sensor.*_chamber_contamination` | `sensor` | Smoke chamber contamination status |
 | `sensor.*_smoke_level` | `sensor` | Current smoke level reading |
-| `sensor.*_smoke_level_unit` | `sensor` | Smoke level unit reported by the device |
 | `sensor.*_rebooted_count` | `sensor` | Device reboot counter |
 | `sensor.*_rejoined_count` | `sensor` | Zigbee network rejoin counter |
 | `sensor.*_reported_packages` | `sensor` | Reported package counter |
-| `select.*_siren_for_automation_only` | `select` | Dedicated siren option for automation use |
 
-This turns the HS1SA-EF-3.0 into more than a simple smoke detector in Home Assistant: it becomes a monitored safety device with remote test/mute controls, chamber telemetry, siren options and Zigbee health counters.
+This turns the HS1SA-EF-3.0 into more than a simple smoke detector in Home Assistant: it becomes a monitored safety device with remote test/mute controls, chamber telemetry, siren control and Zigbee health counters.
 
 ### Current Home Assistant views
 
@@ -81,20 +77,24 @@ binary_sensor.czujnik_dymu_garaz_dym
 sensor.czujnik_dymu_garaz_temperatura
 sensor.czujnik_dymu_garaz_bateria
 siren.czujnik_dymu_garaz
-button.czujnik_dymu_garaz_remote_test
+button.czujnik_dymu_garaz_remote_test_2
 switch.czujnik_dymu_garaz_remote_mute
 sensor.czujnik_dymu_garaz_smoke_level
 sensor.czujnik_dymu_garaz_chamber_contamination
+binary_sensor.czujnik_dymu_garaz_self_test
+binary_sensor.czujnik_dymu_garaz_problem
 
 # Bedroom sensor (entity_id kept at ZHA default — rename anytime in Settings → Devices)
 binary_sensor.heiman_hs1sa_ef_3_0_dym
 sensor.heiman_hs1sa_ef_3_0_temperatura
 sensor.heiman_hs1sa_ef_3_0_bateria
 siren.heiman_hs1sa_ef_3_0
-button.czujnik_dymu_sypialnia_remote_test
+button.czujnik_dymu_sypialnia_remote_test_2
 switch.czujnik_dymu_sypialnia_remote_mute
 sensor.czujnik_dymu_sypialnia_smoke_level
 sensor.czujnik_dymu_sypialnia_chamber_contamination
+binary_sensor.czujnik_dymu_sypialnia_self_test
+binary_sensor.czujnik_dymu_sypialnia_problem
 ```
 
 ---
@@ -460,11 +460,12 @@ Key sections visible:
 
 ## 📝 Notes & Tips
 
-- **HEIMAN ZHA quirk support** — the HS1SA-EF-3.0 exposes the core smoke/siren entities plus an expanded set of diagnostics and remote controls.
+- **Leo HEIMAN ZHA quirk support** — the HS1SA-EF-3.0 uses the quirk from [`Leo2442926161/zha-device-handlers`](https://github.com/Leo2442926161/zha-device-handlers), exposing the core smoke/siren entities plus an expanded set of diagnostics and remote controls.
+- **Great Home Assistant fit** — the Leo quirk adds enough device-specific entities to make this sensor feel native in HA: siren control, remote mute/test, fault/self-test state, chamber telemetry, signal quality and firmware update support.
 - **Temperature bonus** — each unit reports temperature in addition to smoke, making it useful as a secondary thermometer (e.g. detecting heat buildup in garages).
 - **Battery voltage** is exposed as an attribute (`battery_voltage: 3.0`) on `sensor.*_bateria` — useful for tracking voltage decline over time in HA history graphs.
-- **`siren_level` defaults to `Very high level sound`** — verify the `select.*_default_siren_level` entity before deploying in a bedroom.
-- **Remote test and remote mute** — the quirk exposes remote test/mute controls, which are very useful for periodic safety checks and maintenance.
+- **Siren control** — the quirk exposes a standard `siren.*` entity, so automations can trigger the built-in alarm without vendor-specific service calls.
+- **Remote test and remote mute** — use `button.*_remote_test_2` and `switch.*_remote_mute` for periodic safety checks and maintenance.
 - **Smoke chamber telemetry** — `sensor.*_chamber_contamination` and `sensor.*_smoke_level` provide helpful maintenance data beyond a simple smoke alarm state.
 - **OTA firmware** — the `update.*_firmware` entity supports firmware updates through ZHA if HEIMAN releases new versions.
 - **Signal quality** — monitor `sensor.*_lqi` and `sensor.*_rssi` to ensure reliable Zigbee connectivity, especially in critical locations with thick walls or metal structures (garages).
@@ -488,7 +489,7 @@ images/
 ## 🧪 Testing
 
 1. Use `button.*_zidentyfikuj` (**Identify**) to confirm the physical device responds to HA commands before deployment.
-2. Use `button.*_remote_test` to run a remote test from Home Assistant.
+2. Use `button.*_remote_test_2` to run a remote test from Home Assistant.
 3. Trigger a real test with brief match smoke — the sensor is photoelectric and responds within seconds.
 4. Verify the group sensor state in **Developer Tools → States** → search `binary_sensor.alarm_pozar`.
 5. Confirm the mobile notification arrives with the correct room name in the message body.
